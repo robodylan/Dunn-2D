@@ -11,7 +11,7 @@ namespace Dunn_2D
 	{
 		public static Dictionary<string, Texture> textures = new Dictionary<string, Texture>();
 		
-		public static List<Entity> getEntitiesFrom(string mapFile, int id)
+		public static List<Entity> getEntitiesFrom(string mapFile, string img, int id)
 		{
 			Log.Output(1, "Beginning the loading of entities of ID:" + id + " from map: " + mapFile);			
 			List<Entity> entities = new List<Entity>();
@@ -20,7 +20,7 @@ namespace Dunn_2D
 			    for (int y = 0; y < image.Size.Y; y++) {
 			    	for (int x = 0; x < image.Size.X; x++)	{
 	            		if (image.GetPixel((uint)x,(uint)y).R == id) {
-	            			entities.Add(new Entity("portrait.png",x * Block.blockSize, y * Block.blockSize, true));
+	            			entities.Add(new Entity(img,x * Block.blockSize, y * Block.blockSize, true));
 						}	
 	            	}
 				}
@@ -30,7 +30,7 @@ namespace Dunn_2D
 			Log.Output(1, "Done loading entities");
             return entities;            
 		}
-		public static List<Block> getBlocksFrom(string mapFile, int id) 
+		public static List<Block> getBlocksFrom(string mapFile, string img, int id) 
 		{
 			Log.Output(1, "Beginning the loading of blocks of ID:" + id +" from map: " + mapFile);
 			List<Block> blocks = new List<Block>();
@@ -39,7 +39,7 @@ namespace Dunn_2D
 				for(int y = 0; y < image.Size.Y; y++) {
 					for(int x = 0; x < image.Size.X; x++) {
 						if(image.GetPixel((uint)x,(uint)y).R == id) {
-							blocks.Add(new Block("portrait.png", x * Block.blockSize, y * Block.blockSize));
+							blocks.Add(new Block(img, x * Block.blockSize, y * Block.blockSize));
 						}
 					}
 				}

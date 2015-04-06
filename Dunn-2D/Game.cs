@@ -15,6 +15,7 @@ namespace Dunn_2D
 	abstract public class Game
 	{
 		//Type variables
+        public float gravity;
 		public RenderWindow window;
 		public String title;
 		public List<Entity> entities = new List<Entity>();
@@ -87,7 +88,6 @@ namespace Dunn_2D
 				window.Draw(bufferSprite);
 				//Begin physics processing
 				if(e.hasPhysics) {
-                    e.addVelocity(0, .011f);
                     bool willCollideOnX = false;
                     bool willCollideOnY = false;
                     foreach(Block check in blocks)
@@ -95,6 +95,7 @@ namespace Dunn_2D
                         if (PhysMath.willCollide(new FloatRect(e.position.X + e.velocity.X,e.position.Y,e.texture.Size.X,e.texture.Size.Y),
                                                  new FloatRect(check.position.X,check.position.Y,check.texture.Size.X,check.texture.Size.Y)))
                         {
+                            e.setVelocity(0,e.velocity.Y);
                             willCollideOnX = true;
                         }
                     }
@@ -103,6 +104,7 @@ namespace Dunn_2D
                         if (PhysMath.willCollide(new FloatRect(e.position.X, e.position.Y + e.velocity.Y, e.texture.Size.X, e.texture.Size.Y),
                                                  new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
                         {
+                            e.setVelocity(e.velocity.X,0);
                             willCollideOnY = true;
                         }
                     }
@@ -110,6 +112,8 @@ namespace Dunn_2D
                         e.Move(e.velocity.X, 0);
                     }
                     if(!willCollideOnY){
+
+                        e.addVelocity(0, gravity);
                         e.Move(0, e.velocity.Y);
                     }
 				}
@@ -125,8 +129,8 @@ namespace Dunn_2D
 			Log.Output(2, "Window has been closed, exiting...");
 			window.Close();
 		}
-		
-		public void setScale(int scale) {
+        #region GettersAndSetters
+        public void setScale(int scale) {
 			Block.blockSize = scale;
 			Log.Output(1, "Changed the game scale to " + scale +" pixels");
 		}
@@ -158,5 +162,11 @@ namespace Dunn_2D
         {
             window.SetFramerateLimit((uint)fps);
         }
-	}
+
+        public void setGravity(float g)
+        {
+            gravity = g;
+        }
+        #endregion
+    }
 }

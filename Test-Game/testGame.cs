@@ -8,20 +8,22 @@ namespace Test_Game
 {
     class testGame : Game
     {
-        Entity player = new Entity("portrait.png",1,1,true);
+
         public override void Setup()
         {
-            setFPS(200);
             setScale(32);
-            AddEntity(player);
-            player.addVelocity(.5f,1f);
-            entities = Util.getEntitiesFrom("mape.png", 0);
-            blocks = Util.getBlocksFrom("map.png", 0);
+            setFPS(60);
+            gravity = 0.1f;
+            blocks = Util.getBlocksFrom("map.png", "portrait.png",0);
+            entities = Util.getEntitiesFrom("mape.png", "entity.png",0);
         }
 
         public override void Update()
         {
-            player.addVelocity(0, 0);
+            foreach(Entity e in entities)
+            {
+                e.addVelocity(0,0.1f);
+            }
         }
     }
 }
