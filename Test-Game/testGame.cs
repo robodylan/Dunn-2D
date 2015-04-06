@@ -1,22 +1,27 @@
-﻿// This is the test game for the Dunn-2D engine which demonstrates the basic usage of all of it's functions as well as it's features. 
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Dunn_2D;
 
 namespace Test_Game
 {
-	public class testGame : Game 
-	{
-		Entity player = new Entity("portrait.png", 10, 10, true);
-		public override void Setup() {
-			this.setScale(26);
-			this.setTitle("This is a new title");
-			this.entities = Util.getEntitiesFrom("map.png", 255);
-			this.blocks = Util.getBlocksFrom("map.png", 0);
-			this.AddEntity(player); 
-		}
-		
-		public override void Update() {
-			player.Move(10,10);
-		}
-	}
+    class testGame : Game
+    {
+        Entity player = new Entity("portrait.png",1,1,true);
+        public override void Setup()
+        {
+            setFPS(200);
+            setScale(32);
+            AddEntity(player);
+            player.addVelocity(.5f,1f);
+            entities = Util.getEntitiesFrom("mape.png", 0);
+            blocks = Util.getBlocksFrom("map.png", 0);
+        }
+
+        public override void Update()
+        {
+            player.addVelocity(0, 0);
+        }
+    }
 }

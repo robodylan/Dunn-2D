@@ -20,7 +20,7 @@ namespace Dunn_2D
 			    for (int y = 0; y < image.Size.Y; y++) {
 			    	for (int x = 0; x < image.Size.X; x++)	{
 	            		if (image.GetPixel((uint)x,(uint)y).R == id) {
-	            			entities.Add(new Entity("portrait.png",x * Block.blockSize, y * Block.blockSize));
+	            			entities.Add(new Entity("portrait.png",x * Block.blockSize, y * Block.blockSize, true));
 						}	
 	            	}
 				}

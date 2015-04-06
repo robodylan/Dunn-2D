@@ -87,7 +87,31 @@ namespace Dunn_2D
 				window.Draw(bufferSprite);
 				//Begin physics processing
 				if(e.hasPhysics) {
-					e.Move((int)e.velocity.X, (int)e.velocity.Y);
+                    e.addVelocity(0, .011f);
+                    bool willCollideOnX = false;
+                    bool willCollideOnY = false;
+                    foreach(Block check in blocks)
+                    {
+                        if (PhysMath.willCollide(new FloatRect(e.position.X + e.velocity.X,e.position.Y,e.texture.Size.X,e.texture.Size.Y),
+                                                 new FloatRect(check.position.X,check.position.Y,check.texture.Size.X,check.texture.Size.Y)))
+                        {
+                            willCollideOnX = true;
+                        }
+                    }
+                    foreach (Block check in blocks)
+                    {
+                        if (PhysMath.willCollide(new FloatRect(e.position.X, e.position.Y + e.velocity.Y, e.texture.Size.X, e.texture.Size.Y),
+                                                 new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
+                        {
+                            willCollideOnY = true;
+                        }
+                    }
+                    if(!willCollideOnX){
+                        e.Move(e.velocity.X, 0);
+                    }
+                    if(!willCollideOnY){
+                        e.Move(0, e.velocity.Y);
+                    }
 				}
 			}
 			window.Display();
@@ -129,5 +153,10 @@ namespace Dunn_2D
 		public void AddBlock(Block b) {
 			blocks.Add(b);
 		}
+
+        public void setFPS(int fps)
+        {
+            window.SetFramerateLimit((uint)fps);
+        }
 	}
 }

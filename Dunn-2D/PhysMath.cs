@@ -18,7 +18,7 @@ namespace Dunn_2D
 				return (float)Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
 		}
 		
-		public static bool willCollide(IntRect first, IntRect second) {
+		public static bool willCollide(FloatRect first, FloatRect second) {
 			
 			/*//Define First's Corners
 			Vector2f firstTopLeft = new Vector2f(firstObjectsCords.X, firstObjectsCords.Y);

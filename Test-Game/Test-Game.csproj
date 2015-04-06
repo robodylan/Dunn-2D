@@ -30,6 +30,10 @@
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -50,8 +54,11 @@
     <Compile Include="testGame.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Dunn-2D\Dunn-2D.csproj">
-      <Project>{6A6FFD4D-F7BC-4821-862D-510930B6F4E8}</Project>
+      <Project>{6a6ffd4d-f7bc-4821-862d-510930b6f4e8}</Project>
       <Name>Dunn-2D</Name>
     </ProjectReference>
   </ItemGroup>
