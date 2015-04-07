@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Dunn_2D;
-using Microsoft.SqlServer.Server;
 
 namespace Test_Game
 {
@@ -18,6 +17,9 @@ namespace Test_Game
             entities = Util.getEntitiesFrom("Data/img/mape.png", "Data/img/entity.png", 0);
             blocks = Util.getBlocksFrom("Data/img/map.png", "Data/img/block.png", 0);
             AddBlock(b);
+            foreach(Entity e in entities) {
+                e.addVelocity(1f, 0);
+            }
         }
 
         public override void Update()
