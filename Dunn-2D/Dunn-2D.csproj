@@ -48,9 +48,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SFML">
-      <HintPath>..\..\..\..\Downloads\SFML.Net-2.2-sources\SFML.Net-2.2\lib\x64\SFML.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="SFML, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Test-Game\bin\Debug\Data\lib\SFML.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -66,6 +66,7 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Particle.cs" />
     <Compile Include="PhysMath.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="Util.cs" />

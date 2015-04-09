@@ -9,9 +9,11 @@ namespace Dunn_2D
 	/// </summary>
 	public class Entity
 	{
+        public int Age = 0;
 		public Texture texture;
 		public Vector2f position;
 		public Vector2f velocity;
+        public bool isParticle = false;
 		public bool hasPhysics = false;
 		public Entity(string filename, Vector2f position)
 		{

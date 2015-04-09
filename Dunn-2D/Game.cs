@@ -18,8 +18,9 @@ namespace Dunn_2D
         public float gravity;
         public RenderWindow window;
         public String title;
+        public List<Particle> particles = new List<Particle>();
         public List<Entity> entities = new List<Entity>();
-        public List<Block> blocks;
+        public List<Block> blocks = new List<Block>();
         public Sprite bufferSprite;
 
         //Native variables
@@ -138,6 +139,17 @@ namespace Dunn_2D
                     }
                 }
             }
+
+            foreach (Particle e in particles)
+            {
+                bufferSprite.Texture = e.texture;
+                bufferSprite.Position = e.position;
+                window.Draw(bufferSprite);
+                e.Move(e.velocity.X, 0);
+                e.addVelocity(0, gravity);
+                e.Move(0, e.velocity.Y);
+                
+            }
             window.Display();
         }
 
@@ -176,14 +188,28 @@ namespace Dunn_2D
             blocks.Clear();
         }
 
-        public void AddEntity(Entity e)
+        public void AddToScene(Entity e)
         {
             entities.Add(e);
         }
 
-        public void AddBlock(Block b)
+        public void AddToScene(Block b)
         {
             blocks.Add(b);
+        }
+
+        public void createParticleSystem(int x, int y, string fileName)
+        {
+            Random r = new Random(12);
+        }
+
+        public void createParticleSystem(int x, int y, string fileName, int seed)
+        {
+            Random r = new Random(seed);
+            for (int i = 0; i < 100; i++)
+            {
+                particles.Add(new Particle(fileName, x, y));
+            }
         }
 
         public void setFPS(int fps)

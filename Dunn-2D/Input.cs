@@ -13,7 +13,7 @@ namespace Dunn_2D
     //Input variables
     public static class Input
     {
-        public static enum Key
+        public enum Key
         {
             Up,
             Down,
