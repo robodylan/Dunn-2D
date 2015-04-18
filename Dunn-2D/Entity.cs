@@ -22,6 +22,7 @@ namespace Dunn_2D
         public string fileName;
         public bool touching;
         public bool killedByTouch;
+        public bool isControlled;
 		public Entity(string filename, Vector2f position)
 		{
             this.fileName = filename;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dunn_2D.GUI
 {
-    class Text
+    public class Text
     {
         public int x;
         public int y;

@@ -22,10 +22,12 @@ namespace Dunn_2D
         public List<Particle> particles = new List<Particle>();
         public List<Entity> entities = new List<Entity>();
         public List<Block> blocks = new List<Block>();
-        public List<Text> texts = new List<Text>();
+        public List<GUI.Button> buttons = new List<GUI.Button>();
+        public List<GUI.Text> texts = new List<GUI.Text>();
         public Sprite bufferSprite;
         public Text bufferText;
         public int totalFrames = 0;
+        public Random rand = new Random();
 
         //Native variables
         public uint width, height;
@@ -73,6 +75,7 @@ namespace Dunn_2D
             entities = new List<Entity>();
             blocks = new List<Block>();
             bufferSprite = new Sprite();
+            bufferText = new Text("", new Font("content/fnt/Font.ttf"));
             Log.Output(1, "Created base references successfully");
         }
         abstract public void Setup();
@@ -127,6 +130,14 @@ namespace Dunn_2D
                 {
                     if (e.getX() > (int)window.GetView().Center.X - (int)(width / 2) - 64 && e.getX() < (int)window.GetView().Center.X - (int)(width / 2) + width) 
                     {
+                        if (!e.isControlled)
+                        {
+                            e.addVelocity(-(float)rand.NextDouble() / 10,0);
+                        }
+                        if(!e.isControlled && e.isColliding)
+                        {
+                            e.addVelocity(0, -(float)rand.NextDouble() * 8);
+                        }
                         if (e.Health < 0)
                         {
                             entities.Remove(e);
@@ -150,7 +161,7 @@ namespace Dunn_2D
                         {
                             e.touching = false;
                         }
-                        if (totalFrames % 10 == 0)
+                        if (totalFrames % 5 == 0)
                         {
                             e.Animate();
                         }
@@ -210,6 +221,13 @@ namespace Dunn_2D
                     e.Move(0, e.velocity.Y);
 
                 }
+                foreach(GUI.Text t in texts)
+                {
+                    bufferText.CharacterSize = 50;
+                    bufferText.Position = new Vector2f(t.x + (int)window.GetView().Center.X - (int)(width / 2), t.y + (int)window.GetView().Center.Y - (int)(height / 2));
+                    bufferText.DisplayedString = t.text;
+                    window.Draw(bufferText);
+                }
             }
             catch
             {
@@ -266,6 +284,16 @@ namespace Dunn_2D
         public void AddToScene(Block b)
         {
             blocks.Add(b);
+        }
+
+        public void AddToScene(GUI.Text t)
+        {
+            texts.Add(t);
+        }
+
+        public void AddToScene(GUI.Button btn)
+        {
+            buttons.Add(btn);
         }
 
         public void createParticleSystem(int x, int y, string fileName)
