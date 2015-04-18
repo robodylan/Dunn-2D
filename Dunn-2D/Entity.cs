@@ -1,11 +1,12 @@
 ﻿using System;
 using SFML.Graphics;
 using SFML.System;
+using System.IO;
 
 namespace Dunn_2D
 { 
 	/// <summary>
-	/// The base class for all classes that represent a entity or character in the game.
+	/// The base class for all classes that represent an entity or character in the game.
 	/// </summary>
 	public class Entity
 	{
@@ -15,33 +16,43 @@ namespace Dunn_2D
 		public Vector2f velocity;
         public bool isParticle = false;
 		public bool hasPhysics = false;
+        public bool isColliding = false;
+        public int animationFrame = 0;
+        public int Health;
+        public string fileName;
+        public bool touching;
+        public bool killedByTouch;
 		public Entity(string filename, Vector2f position)
 		{
-			this.texture = Util.getTexture(filename);
+            this.fileName = filename;
+			this.texture = Util.getTexture(filename + "0.png");
 			this.position = position;			
 		}
 		
 		public Entity(string filename, Vector2f position, bool hasPhysics)
 		{
-			this.texture = Util.getTexture(filename);
+            this.fileName = filename;
+			this.texture = Util.getTexture(filename + "0.png");
 			this.position = position;
 			this.hasPhysics = hasPhysics;
 		}
 		
 		public Entity(string filename, int x, int y)
 		{
-			this.texture = Util.getTexture(filename);
+            this.fileName = filename;
+			this.texture = Util.getTexture(filename + "0.png");
 			this.position = new Vector2f(x,y);
 		}
 		
 		public Entity(string filename, int x, int y, bool hasPhysics)
 		{
-			this.texture = Util.getTexture(filename);
+            this.fileName = filename;
+			this.texture = Util.getTexture(filename + "0.png");
 			this.position = new Vector2f(x,y);
 			this.hasPhysics = hasPhysics;
 		}
 		
-		public void Move(float x, float y) {
+		public virtual void Move(float x, float y) {
 			this.setX(this.getX() + x);
 			this.setY(this.getY() + y);
 		}
@@ -50,6 +61,19 @@ namespace Dunn_2D
 			this.setX(this.getX() + increment.X);
 			this.setY(this.getY() + increment.Y);
 		}
+
+        public void Animate()
+        {
+            if(File.Exists(fileName + animationFrame + ".png"))
+            {
+                texture = Util.getTexture(fileName + animationFrame + ".png");
+                animationFrame++;
+            }
+            else
+            {
+                animationFrame = 0;
+            }
+        }
 		
 	#region GettersAndSetters
 		public float getX() {
@@ -93,6 +117,20 @@ namespace Dunn_2D
         public void setVelocity(float x, float y)
         {
             this.velocity = new Vector2f(x, y);
+        }
+
+        public float getVelocityX()
+        {
+            return this.velocity.X;
+        }
+        public float getVelocityY()
+        {
+            return this.velocity.Y;
+        }
+
+        public void setTexture(string fileName)
+        {
+            this.texture = Util.getTexture(fileName);
         }
 	#endregion
 	}

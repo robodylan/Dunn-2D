@@ -53,7 +53,7 @@ namespace Dunn_2D
 		public static Texture getTexture(string filename) {
 			if (textures.ContainsKey(filename)) {
 				return textures[filename];
-				Console.WriteLine("Loade " + filename);
+				Console.WriteLine("Loaded" + filename);
 				//TODO exception handling 
 			}
 			else

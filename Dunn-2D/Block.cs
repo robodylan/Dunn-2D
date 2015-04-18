@@ -13,6 +13,8 @@ namespace Dunn_2D
 		public Texture texture;
 		public Vector2f position;
 		public bool hasPhysics = false;
+        public bool mouseHover = false;
+        public Color hoverColor = new Color();
 		
 		public Block(string filename, Vector2f position)
 		{
@@ -63,6 +65,11 @@ namespace Dunn_2D
 		public void setPosition(Vector2f position) {
 			this.position = position;
 		}
+
+        public void setHoverColor(int R, int G, int B)
+        {
+            this.hoverColor = new Color((byte)R, (byte)G, (byte)B);
+        }
 	#endregion
 	}
 }

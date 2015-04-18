@@ -65,10 +65,10 @@
     <Compile Include="Block.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GUI\Text.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Particle.cs" />
     <Compile Include="PhysMath.cs" />
-    <Compile Include="Time.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

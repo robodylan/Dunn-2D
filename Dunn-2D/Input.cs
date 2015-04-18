@@ -46,8 +46,48 @@ namespace Dunn_2D
             
         }
 
-        public static bool isKeyDown()
+        public static bool isKeyDown(Key key)
         {
+            switch(key)
+            {
+
+                case Key.Up:
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.W))
+                    {
+                        return true;
+                    }
+                    break;
+                case Key.Down:
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                    {
+                        return true;
+                    }
+                    break;
+                case Key.Left:
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                    {
+                        return true;
+                    }
+                    break;
+                case Key.Right:
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                    {
+                        return true;
+                    }
+                    break;
+                case Key.Jump:
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.Space))
+                    {
+                        return true;
+                    }
+                    break;
+                case Key.Shoot:
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.F))
+                    {
+                        return true;
+                    }
+                    break;
+            }
             return false;
         }
 
