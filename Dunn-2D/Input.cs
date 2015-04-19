@@ -46,6 +46,15 @@ namespace Dunn_2D
             
         }
 
+        public static bool isLeftClicked()
+        {
+            return Mouse.IsButtonPressed(Mouse.Button.Left);
+        }
+        public static bool isRightClicked()
+        {
+            return Mouse.IsButtonPressed(Mouse.Button.Right);
+        }
+
         public static bool isKeyDown(Key key)
         {
             switch(key)

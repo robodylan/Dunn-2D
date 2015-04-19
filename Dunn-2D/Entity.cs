@@ -23,6 +23,9 @@ namespace Dunn_2D
         public bool touching;
         public bool killedByTouch;
         public bool isControlled;
+        public Color color;
+        public int targetX;
+        public int targetY;
 		public Entity(string filename, Vector2f position)
 		{
             this.fileName = filename;
@@ -52,6 +55,15 @@ namespace Dunn_2D
 			this.position = new Vector2f(x,y);
 			this.hasPhysics = hasPhysics;
 		}
+
+        public Entity(string filename, int x, int y, bool hasPhysics, bool isParticle)
+        {
+            this.isParticle = isParticle;
+            this.fileName = filename;
+            this.texture = Util.getTexture(filename + "0.png");
+            this.position = new Vector2f(x, y);
+            this.hasPhysics = hasPhysics;
+        }
 		
 		public virtual void Move(float x, float y) {
 			this.setX(this.getX() + x);
@@ -77,6 +89,11 @@ namespace Dunn_2D
         }
 		
 	#region GettersAndSetters
+
+        public void setColor(int R, int G, int B)
+        {
+            this.color = new Color((byte)R, (byte)G, (byte)B);
+        }
 		public float getX() {
 			return this.position.X;
 		}

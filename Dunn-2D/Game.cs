@@ -19,7 +19,6 @@ namespace Dunn_2D
         public float gravity;
         public RenderWindow window;
         public String title;
-        public List<Particle> particles = new List<Particle>();
         public List<Entity> entities = new List<Entity>();
         public List<Block> blocks = new List<Block>();
         public List<GUI.Button> buttons = new List<GUI.Button>();
@@ -28,6 +27,7 @@ namespace Dunn_2D
         public Text bufferText;
         public int totalFrames = 0;
         public Random rand = new Random();
+        public Texture background;
 
         //Native variables
         public uint width, height;
@@ -96,7 +96,9 @@ namespace Dunn_2D
 
         public void Draw()
         {
-
+            Sprite bg = new Sprite(background);
+            bg.Position = new Vector2f(window.GetView().Center.X - 400, window.GetView().Center.Y - 300);
+            window.Draw(bg);
             totalFrames++;
             //Draw each Block in blocks
             foreach (Block b in blocks)
@@ -107,6 +109,11 @@ namespace Dunn_2D
                     int mY = Mouse.GetPosition(window).Y + (int)window.GetView().Center.Y - (int)(height / 2);
                     if (mX > b.getX() && mX < b.getX() + Block.blockSize && mY > b.getY() && mY < Block.blockSize + b.getY())
                     {
+                        if(Mouse.IsButtonPressed(Mouse.Button.Left))
+                        {
+                            blocks.Remove(b);
+                            return;
+                        }
                         b.mouseHover = true;
                     }
                     else
@@ -115,9 +122,9 @@ namespace Dunn_2D
                     }
                     if (b.mouseHover)
                     {
-                        bufferSprite.Color = b.hoverColor;
+                        bufferSprite.Color =Color.Red;
                     }
-                    bufferSprite.Texture = b.texture;
+                    bufferSprite = new Sprite(b.texture);
                     bufferSprite.Position = b.position;
                     window.Draw(bufferSprite);
                     bufferSprite.Color = Color.White;
@@ -128,15 +135,31 @@ namespace Dunn_2D
                 //Draw each Entity in entities
                 foreach (Entity e in entities)
                 {
+
+                    bufferSprite = new Sprite(e.texture);
+                    if(e.isParticle == true)
+                    {
+                        bufferSprite = new Sprite(new Texture("content/img/playerLeft0.png"));
+                    }
+                    bufferSprite.Color = e.color;
+                    bufferSprite.Position = e.position;
+                    window.Draw(bufferSprite);
+                    bufferSprite.Color = Color.White;
                     if (e.getX() > (int)window.GetView().Center.X - (int)(width / 2) - 64 && e.getX() < (int)window.GetView().Center.X - (int)(width / 2) + width) 
                     {
-                        if (!e.isControlled)
+                        if (!e.isControlled && e.isColliding)
                         {
-                            e.addVelocity(-(float)rand.NextDouble() / 10,0);
-                        }
-                        if(!e.isControlled && e.isColliding)
-                        {
-                            e.addVelocity(0, -(float)rand.NextDouble() * 8);
+                            if(e.getX() < e.targetX)
+                            {                                
+                                e.addVelocity(rand.Next(1, 4) / 20f,0);
+                                e.fileName = "content/img/enemyRight";
+                            }
+                            if (e.getX() > e.targetX)
+                            {
+                                e.addVelocity(-rand.Next(1, 4) / 20f, 0);
+                                e.fileName = "content/img/enemyLeft";
+                            }
+                            e.addVelocity(0, -rand.Next(1, 4) * 3.56f);
                         }
                         if (e.Health < 0)
                         {
@@ -165,9 +188,6 @@ namespace Dunn_2D
                         {
                             e.Animate();
                         }
-                        bufferSprite.Texture = e.texture;
-                        bufferSprite.Position = e.position;
-                        window.Draw(bufferSprite);
                         //Begin physics processing
                         if (e.hasPhysics)
                         {
@@ -178,7 +198,6 @@ namespace Dunn_2D
                                 if (PhysMath.willCollide(new FloatRect(e.position.X + e.velocity.X, e.position.Y, e.texture.Size.X, e.texture.Size.Y),
                                                          new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
                                 {
-
                                     e.setVelocity(e.velocity.X / 2, e.velocity.Y);
                                     willCollideOnX = true;
                                 }
@@ -203,26 +222,16 @@ namespace Dunn_2D
                                 e.addVelocity(0, gravity);
                                 e.Move(0, e.velocity.Y);
                             }
-                            else
+                            else if(e.velocity.Y > 0)
                             {
                                 e.isColliding = true;
                             }
                         }
                     }
                 }
-
-                foreach (Particle e in particles)
-                {
-                    bufferSprite.Texture = e.texture;
-                    bufferSprite.Position = e.position;
-                    window.Draw(bufferSprite);
-                    e.Move(e.velocity.X, 0);
-                    e.addVelocity(0, gravity);
-                    e.Move(0, e.velocity.Y);
-
-                }
                 foreach(GUI.Text t in texts)
                 {
+                    bufferText.Color = t.color;
                     bufferText.CharacterSize = 50;
                     bufferText.Position = new Vector2f(t.x + (int)window.GetView().Center.X - (int)(width / 2), t.y + (int)window.GetView().Center.Y - (int)(height / 2));
                     bufferText.DisplayedString = t.text;
@@ -238,6 +247,7 @@ namespace Dunn_2D
 
         public void Cleanup()
         {
+            window.Close();
             Log.Output(1, "Cleaning up.... ;)");
         }
 
@@ -247,7 +257,18 @@ namespace Dunn_2D
             window.Close();
         }
         #region GettersAndSetters
-
+        public int offsetX()
+        {
+            return (int)window.GetView().Center.X;
+        }
+        public int offsetY()
+        {
+            return (int)window.GetView().Center.Y;
+        }
+        public void setBackground(string filename)
+        {
+            this.background = Util.getTexture(filename);
+        }
         public void setCenter(int centerX, int centerY)
         {
             window.SetView(new View(new FloatRect(centerX - ((width - 64) / 2), centerY - ((height - 64) / 2), 800, 600)));
@@ -298,15 +319,11 @@ namespace Dunn_2D
 
         public void createParticleSystem(int x, int y, string fileName)
         {
-            Random r = new Random(12);
-        }
-
-        public void createParticleSystem(int x, int y, string fileName, int seed)
-        {
-            Random r = new Random(seed);
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
-                particles.Add(new Particle(fileName, x, y));
+                Entity e = new Entity(fileName, x, y, true, true);
+                e.setVelocity(0, 0);
+                AddToScene(e);
             }
         }
 
