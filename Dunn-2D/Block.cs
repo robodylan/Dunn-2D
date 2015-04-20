@@ -15,6 +15,10 @@ namespace Dunn_2D
 		public bool hasPhysics = false;
         public bool mouseHover = false;
         public Color hoverColor = new Color();
+        public Color color = Color.White;
+        public int damage;
+        public int ID;
+        public int rotation;
 		
 		public Block(string filename, Vector2f position)
 		{
@@ -41,6 +45,10 @@ namespace Dunn_2D
 			this.hasPhysics = hasPhysics;
 		}
 	#region GettersAndSetters
+        public void setColor(int R, int G, int B)
+        {
+            this.color = new Color((byte)R,(byte)G,(byte)B);
+        }
 		public int getX() {
 			return (int)this.position.X;
 		}

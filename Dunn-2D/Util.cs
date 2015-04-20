@@ -39,7 +39,9 @@ namespace Dunn_2D
 				for(int y = 0; y < image.Size.Y; y++) {
 					for(int x = 0; x < image.Size.X; x++) {
 						if(image.GetPixel((uint)x,(uint)y).R == id) {
-							blocks.Add(new Block(img, x * Block.blockSize, y * Block.blockSize));
+                            Block b = new Block(img, x * Block.blockSize, y * Block.blockSize);
+                            b.ID = image.GetPixel((uint)x, (uint)y).R;
+							blocks.Add(b);
 						}
 					}
 				}

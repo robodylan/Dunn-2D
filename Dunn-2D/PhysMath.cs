@@ -9,13 +9,14 @@ namespace Dunn_2D
 	public static class PhysMath
 	{
 		
-		public static float getDistance(Vector2i d1, Vector2i d2) {
-			int x1 = d1.X;
-			int x2 = d2.X;
-			int y1 = d1.Y;
-			int y2 = d2.Y;
-				
-				return (float)Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+		public static float getDistance(Vector2f d1, Vector2f d2) {
+	        float x1 = d1.X;
+			float x2 = d2.X;
+			float y1 = d1.Y;
+			float y2 = d2.Y;
+		    float rtn = (float)Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+            Console.WriteLine(rtn);
+				return rtn;
 		}
 		
 		public static bool willCollide(FloatRect first, FloatRect second) {

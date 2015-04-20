@@ -28,6 +28,9 @@ namespace Dunn_2D
         public int totalFrames = 0;
         public Random rand = new Random();
         public Texture background;
+        public Texture overlay;
+        public static int Kills;
+        public int Destroyed;
 
         //Native variables
         public uint width, height;
@@ -64,7 +67,6 @@ namespace Dunn_2D
             try
             {
                 window.Closed += OnClose;
-                window.MouseMoved += Input.setMousePos;
             }
             catch
             {
@@ -97,7 +99,8 @@ namespace Dunn_2D
         public void Draw()
         {
             Sprite bg = new Sprite(background);
-            bg.Position = new Vector2f(window.GetView().Center.X - 400, window.GetView().Center.Y - 300);
+            bg.Scale = new Vector2f(10,10);
+            bg.Position = new Vector2f((window.GetView().Center.X  / 1.5f) - 800, (window.GetView().Center.Y / 1.5f) - 600);
             window.Draw(bg);
             totalFrames++;
             //Draw each Block in blocks
@@ -107,27 +110,19 @@ namespace Dunn_2D
                 {
                     int mX = Mouse.GetPosition(window).X + (int)window.GetView().Center.X - (int)(width / 2);
                     int mY = Mouse.GetPosition(window).Y + (int)window.GetView().Center.Y - (int)(height / 2);
-                    if (mX > b.getX() && mX < b.getX() + Block.blockSize && mY > b.getY() && mY < Block.blockSize + b.getY())
-                    {
-                        if(Mouse.IsButtonPressed(Mouse.Button.Left))
-                        {
-                            blocks.Remove(b);
-                            return;
-                        }
-                        b.mouseHover = true;
-                    }
-                    else
-                    {
-                        b.mouseHover = false;
-                    }
+                    if (b.ID == 14) b.rotation += 5;
                     if (b.mouseHover)
                     {
-                        bufferSprite.Color =Color.Red;
+                        bufferSprite.Color = Color.Red;
                     }
-                    bufferSprite = new Sprite(b.texture);
-                    bufferSprite.Position = b.position;
-                    window.Draw(bufferSprite);
-                    bufferSprite.Color = Color.White;
+                        bufferSprite = new Sprite(b.texture);
+                        bufferSprite.Rotation = b.rotation;
+                        bufferSprite.Color = b.color;
+                        bufferSprite.Position = b.position;
+                        if (b.ID == 14) bufferSprite.Position = new Vector2f(b.position.X + 32, b.position.Y + 32);
+                        if (b.ID == 14) bufferSprite.Origin = new Vector2f(32,32);
+                        window.Draw(bufferSprite);
+                        bufferSprite.Color = Color.White;
                 }
             }
             try
@@ -135,34 +130,39 @@ namespace Dunn_2D
                 //Draw each Entity in entities
                 foreach (Entity e in entities)
                 {
-
-                    bufferSprite = new Sprite(e.texture);
-                    if(e.isParticle == true)
-                    {
-                        bufferSprite = new Sprite(new Texture("content/img/playerLeft0.png"));
-                    }
-                    bufferSprite.Color = e.color;
-                    bufferSprite.Position = e.position;
-                    window.Draw(bufferSprite);
-                    bufferSprite.Color = Color.White;
+                        bufferSprite = new Sprite(e.texture);
+                        bufferSprite.Color = e.color;
+                        bufferSprite.Position = e.position;
+                        window.Draw(bufferSprite);
+                        bufferSprite.Color = Color.White;
                     if (e.getX() > (int)window.GetView().Center.X - (int)(width / 2) - 64 && e.getX() < (int)window.GetView().Center.X - (int)(width / 2) + width) 
                     {
+                        if(e.position.Y > 10000 && !e.isControlled)
+                        {
+                            entities.Remove(e);
+                            if (!e.isParticle) Kills++;
+                            return;
+                        }
                         if (!e.isControlled && e.isColliding)
                         {
                             if(e.getX() < e.targetX)
                             {                                
-                                e.addVelocity(rand.Next(1, 4) / 20f,0);
+                                e.addVelocity(rand.Next(2, 22) / 20f,0);
                                 e.fileName = "content/img/enemyRight";
                             }
                             if (e.getX() > e.targetX)
                             {
-                                e.addVelocity(-rand.Next(1, 4) / 20f, 0);
+                                e.addVelocity(-rand.Next(2, 22) / 20f, 0);
                                 e.fileName = "content/img/enemyLeft";
                             }
-                            e.addVelocity(0, -rand.Next(1, 4) * 3.56f);
+                            if (e.getY() > e.targetY)
+                            {
+                                e.addVelocity(0, -rand.Next(1, 8) * 3.56f);
+                            }
                         }
                         if (e.Health < 0)
                         {
+                            if (!e.isParticle) Kills++;
                             entities.Remove(e);
                         }
                         bool touch = false;
@@ -170,13 +170,13 @@ namespace Dunn_2D
                         {
                             foreach (Entity check in entities)
                             {
-                                if (PhysMath.willCollide(new FloatRect(e.getX(), e.getY(), e.texture.Size.X, e.texture.Size.Y), new FloatRect(check.getX(), check.getY(), check.texture.Size.X, check.texture.Size.Y)) && !(check == e))
+                                if (PhysMath.willCollide(new FloatRect(e.getX(), e.getY(), e.texture.Size.X, e.texture.Size.Y), new FloatRect(check.getX(), check.getY(), check.texture.Size.X, check.texture.Size.Y)) && !(check == e) && !check.isParticle)
                                 {
                                     touch = true;
                                 }
                             }
                         }
-                        if (touch)
+                        if (touch && !e.isParticle)
                         {
                             e.touching = true;
                         }
@@ -184,7 +184,7 @@ namespace Dunn_2D
                         {
                             e.touching = false;
                         }
-                        if (totalFrames % 5 == 0)
+                        if (totalFrames % 2.5f == 0)
                         {
                             e.Animate();
                         }
@@ -195,28 +195,50 @@ namespace Dunn_2D
                             bool willCollideOnY = false;
                             foreach (Block check in blocks)
                             {
-                                if (PhysMath.willCollide(new FloatRect(e.position.X + e.velocity.X, e.position.Y, e.texture.Size.X, e.texture.Size.Y),
-                                                         new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
+                                if (check.getX() > (int)window.GetView().Center.X - (int)(width / 2) - 64 && check.getX() < (int)window.GetView().Center.X - (int)(width / 2) + width && check.getY() > (int)window.GetView().Center.Y - (int)(width / 2) - 64 && check.getY() < (int)window.GetView().Center.Y - (int)(height / 2) + height && !e.isParticle)
                                 {
-                                    e.setVelocity(e.velocity.X / 2, e.velocity.Y);
-                                    willCollideOnX = true;
-                                }
-                            }
-                            foreach (Block check in blocks)
-                            {
-                                if (PhysMath.willCollide(new FloatRect(e.position.X, e.position.Y + e.velocity.Y + gravity, e.texture.Size.X, e.texture.Size.Y),
-                                                         new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
-                                {
-                                    e.setVelocity(e.velocity.X = e.velocity.X * .95f, e.velocity.Y / 2);
-                                    willCollideOnY = true;
+                                    if (PhysMath.willCollide(new FloatRect(e.position.X + 1 + e.velocity.X, e.position.Y + 1, e.texture.Size.X - 1, e.texture.Size.Y - 1),
+                                                             new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
+                                    {
+                                        if (check.ID == 14)
+                                        {
+                                            if (e.isControlled)
+                                            {
+                                                Cleanup();
+                                            }
+                                            if (!e.isParticle) check.damage = check.damage + 40;
+                                            if (!e.isParticle) Kills++;
+                                            entities.Remove(e);
+                                            return;
+                                        }
+                                        if (!e.isParticle) e.setVelocity(e.velocity.X / 1.4f, e.velocity.Y);
+                                        willCollideOnX = true;
+                                    }
+                                    if (PhysMath.willCollide(new FloatRect(e.position.X + 1, e.position.Y + 1 + e.velocity.Y + gravity, e.texture.Size.X - 1, e.texture.Size.Y - 1),
+                                                             new FloatRect(check.position.X, check.position.Y, check.texture.Size.X, check.texture.Size.Y)))
+                                    {
+                                        if (check.ID == 14)
+                                        {
+                                            if (e.isControlled)
+                                            {
+                                                Cleanup();
+                                            }
+                                            if (!e.isParticle) check.damage = check.damage + 40;
+                                            if (!e.isParticle) Kills++;
+                                            entities.Remove(e);
+                                            return;
+                                        }
+                                        if (!e.isParticle) e.setVelocity(e.velocity.X * .90f, e.velocity.Y / 1.4f);
+                                        willCollideOnY = true;
+                                    }
                                 }
                             }
 
-                            if (!willCollideOnX)
+                            if (!willCollideOnX || e.isParticle)
                             {
                                 e.Move(e.velocity.X, 0);
                             }
-                            if (!willCollideOnY)
+                            if (!willCollideOnY || e.isParticle)
                             {
                                 e.isColliding = false;
                                 e.addVelocity(0, gravity);
@@ -230,9 +252,14 @@ namespace Dunn_2D
                     }
                 }
                 foreach(GUI.Text t in texts)
-                {
+                {   
+                    bufferText.Color = Color.Black;
+                    bufferText.CharacterSize = 25;
+                    bufferText.Position = new Vector2f(t.x + (int)window.GetView().Center.X - (int)(width / 2) + 3, t.y + (int)window.GetView().Center.Y - (int)(height / 2) + 3);
+                    bufferText.DisplayedString = t.text;
+                    window.Draw(bufferText);
                     bufferText.Color = t.color;
-                    bufferText.CharacterSize = 50;
+                    bufferText.CharacterSize = 25;
                     bufferText.Position = new Vector2f(t.x + (int)window.GetView().Center.X - (int)(width / 2), t.y + (int)window.GetView().Center.Y - (int)(height / 2));
                     bufferText.DisplayedString = t.text;
                     window.Draw(bufferText);
@@ -257,6 +284,16 @@ namespace Dunn_2D
             window.Close();
         }
         #region GettersAndSetters
+
+        public int getMouseX()
+        {
+            return Mouse.GetPosition(window).X + offsetX() - (int)(width / 2) - 32;
+        }
+
+        public int getMouseY()
+        {
+            return Mouse.GetPosition(window).Y + offsetY() - (int)(height / 2) - 32;
+        }
         public int offsetX()
         {
             return (int)window.GetView().Center.X;
@@ -268,6 +305,10 @@ namespace Dunn_2D
         public void setBackground(string filename)
         {
             this.background = Util.getTexture(filename);
+        }
+        public void setOverlay(string filename)
+        {
+            this.overlay = Util.getTexture(filename);
         }
         public void setCenter(int centerX, int centerY)
         {
@@ -319,10 +360,12 @@ namespace Dunn_2D
 
         public void createParticleSystem(int x, int y, string fileName)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
                 Entity e = new Entity(fileName, x, y, true, true);
-                e.setVelocity(0, 0);
+                e.setVelocity(rand.Next(-100, 100) / 10f, rand.Next(-100, 100) / 10f);
+                e.setColor(255,255,255);
+                e.isParticle = true;
                 AddToScene(e);
             }
         }
